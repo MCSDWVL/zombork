@@ -1,0 +1,90 @@
+<html>
+    <head>
+    <STYLE TYPE="text/css">
+    <!--
+    BODY
+       {
+        font-family:Courier;
+       }
+    TD
+        {
+            font-size:10pt;
+        }
+    -->
+    </STYLE>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td>
+                    <form name="commandBox" action="" onsubmit="try { enterCommand(event); } catch (err) { OutputToWindow(err.message); } finally { return false; }">
+                        <textarea readonly="readonly" rows=20 cols=100 name="story" style="border: none"></textarea>
+                        <br />
+                        > <input type="text" name="command" style="border: none" size=100/>
+                    </form>
+                </td>
+                <td>
+                    <table>
+                        <tr><td>HP:</td><td><div ID="HP">100</div></td></tr>
+                        <tr><td>Hunger:</td><td><div ID="HUNGER">0</div></td></tr>
+                        <tr><td>Thirst:</td><td><div ID="THIRST">0</div></td></tr>
+                        <tr><td>Fatigue:</td><td><div ID="FATIGUE">0</div></td></tr>
+                        <tr><td>Sanity:</td><td><div ID="SANITY">100</div></td></tr>
+                        <tr><td>Infection:</td><td><div ID="INFECTION">0</div></td></tr>
+                        <tr><td>Turn:</td><td><div ID="TURN">0</div></td></tr>
+                        <tr><td>Time:</td><td><div ID="TIME">00:00</div></td></tr>
+                    </table>
+                </td>
+                    <div ID="editoroutput"></div>
+    </body>
+</html>
+
+<script language=javascript>
+function OutputToWindow(str)
+{
+    document.commandBox.story.value += "\n" + str;
+    var textarea = document.commandBox.story;
+    textarea.scrollTop = textarea.scrollHeight;
+}
+</script>
+
+<script src="inheritance.js"></script>
+<script src="gameScene.js"></script>
+<script src="objectFactory.js"></script>
+<script src="gameObject.js"></script>
+<script src="livingObject.js"></script>
+<script src="zombieObject.js"></script>
+<script src="humanObject.js"></script>
+
+<script src="commandInterpreter.js"></script>
+
+<script src="main.js"></script>
+
+<script language=javascript>
+    document.commandBox.command.focus();
+
+    Init();
+    updateStats();
+    function enterCommand(event)
+    {
+        OutputToWindow("\n> " + document.commandBox.command.value);
+        ParseUserCommand(document.commandBox.command.value);
+        document.commandBox.command.value = "";
+        updateStats();
+    }
+
+    function updateStats()
+    {
+        document.all.HP.innerHTML = "" + g_scene.player.hp;
+        document.all.HUNGER.innerHTML = "" + Math.round(g_scene.player.hunger);
+        document.all.THIRST.innerHTML = "" + Math.round(g_scene.player.thirst);
+        document.all.FATIGUE.innerHTML = "" + Math.round(g_scene.player.exhaustion);
+        document.all.INFECTION.innerHTML = "" + Math.round(g_scene.player.infection);
+        document.all.TURN.innerHTML = "" + g_turn;
+
+        // time
+        var h = g_time.getHours();
+        var m = g_time.getMinutes();
+        document.all.TIME.innerHTML = ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
+    }
+</script>
